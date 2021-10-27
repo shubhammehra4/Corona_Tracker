@@ -40,13 +40,9 @@ function App() {
           {tab == 0 ? <Home /> : tab == 1 ? <Tracker /> : <Guidelines />}
         </AnimatePresence>
       </div>
-      {listening && (
-        <Mic
-          transcript={transcript}
-          reset={resetTranscript}
-          stop={stopListening}
-        />
-      )}
+      <AnimatePresence exitBeforeEnter>
+        {listening && <Mic transcript={transcript} stop={stopListening} />}
+      </AnimatePresence>
     </div>
   );
 }

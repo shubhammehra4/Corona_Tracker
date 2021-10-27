@@ -16,17 +16,6 @@ type GlobalContext = {
   startListening: () => void;
   stopListening: () => void;
 };
-// function keyDownListener(e: KeyboardEvent) {
-//   console.log("Keypress", e.code, e.key);
-// }
-
-// useEffect(() => {
-//   window.addEventListener("keydown", keyDownListener);
-
-//   return () => {
-//     window.removeEventListener("keydown", keyDownListener);
-//   };
-// }, [keyDownListener]);
 
 const GlobalContext = createContext<GlobalContext>(null!);
 
@@ -52,7 +41,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
   function speakText(text: string) {
     const sayThis = new SpeechSynthesisUtterance(text);
     sayThis.voice = voice;
-    sayThis.rate = 0.8;
+    sayThis.rate = 0.9;
     sayThis.pitch = 1;
     synth.speak(sayThis);
   }
@@ -78,8 +67,8 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
         if (err) {
           console.log("Please try again");
         } else {
-          speakText("Hello");
-          console.log(data);
+          const text = `Currently, in ${data.region}, the number of total cases are ${data.totalInfected}, active cases are ${data.activeCases} and recovered cases are ${data.recovered}`;
+          speakText(text);
         }
       },
       isFuzzyMatch: true,
@@ -87,7 +76,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
     },
     {
       command: ":status cases in *",
-      callback: (_a: string, val: string) => {
+      callback: (_a: string, val: string, _, { resetTranscript }) => {
         const validStatus = ["active", "recovered", "total"];
         const [status, ...temp] = val.split(" ");
 
@@ -96,13 +85,18 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
           const state = temp.join(" ");
           const [err, data] = getRegionData(state);
           if (err) {
-            console.log("Please try again");
+            speakText("Sorry, Can you please repeat?");
           } else {
-            console.log(data[statusMapping[status]]);
+            const text = `Currently, the ${status} cases in ${state} are ${
+              data[statusMapping[status]]
+            }`;
+            speakText(text);
           }
         } else {
           console.log("Invalid status", status);
+          speakText("Sorry, Can you please repeat?");
         }
+        resetTranscript();
       },
       isFuzzyMatch: true,
       fuzzyMatchingThreshold: 0.3,
@@ -166,6 +160,24 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
       setData(data);
     })();
   }, []);
+
+  function keyDownListener(e: KeyboardEvent) {
+    if (e.key === "?") {
+      if (!listening) {
+        startListening();
+      } else {
+        stopListening();
+      }
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("keydown", keyDownListener);
+
+    return () => {
+      window.removeEventListener("keydown", keyDownListener);
+    };
+  }, [keyDownListener]);
 
   return (
     <GlobalContext.Provider

@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import SpeechRecognition from "react-speech-recognition";
-import { Mic } from "../components/Mic";
 import { useGlobalContext } from "../context/globalContext";
 import corona from "../Images/corona.svg";
 import mic from "../Images/mic.svg";
@@ -34,16 +33,20 @@ export default function Home() {
             Be aware of the trends of corona around you and take neccessary
             measures
           </p>
-
-          <button
-            onClick={() => startListening()}
-            className="my-4 lg:my-10 bg-[#E45E5E] w-[fit-content] px-5 lg:px-16 py-1 lg:py-3 rounded-full text-lg md:text-xl font-bold hover:opacity-90 flex items-center"
-          >
-            <span className="mr-3">
-              <img className="text-white w-[1.2em] h-[1.2em]" src={mic} />
-            </span>
-            Voice Search
-          </button>
+          <div className="">
+            <button
+              onClick={() => startListening()}
+              className="my-4 lg:my-10 bg-[#E45E5E] w-[fit-content] px-5 lg:px-16 py-1 lg:py-3 rounded-full text-lg md:text-xl font-bold hover:opacity-90 flex items-center has-tooltip relative"
+            >
+              <span className="tooltip mt-24 w-[fit-content] rounded shadow-lg p-1 bg-black opacity-75">
+                Shift + /
+              </span>
+              <span className="mr-3">
+                <img className="text-white w-[1.2em] h-[1.2em]" src={mic} />
+              </span>
+              Voice Search
+            </button>
+          </div>
         </div>
         <div>
           <img src={corona} className="h-[240px]  md:h-[480px] md:w-[500px]" />
