@@ -7,6 +7,7 @@ import SpeechRecognition, {
 import REGIONLIST from "../regions.json";
 
 type GlobalContext = {
+  data: any;
   tab: number;
   setTab: (value: React.SetStateAction<number>) => void;
   listening: boolean;
@@ -45,6 +46,17 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
   const [listening, setListening] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
 
+  const synth = window.speechSynthesis;
+  const voice = window.speechSynthesis.getVoices()[1];
+
+  function speakText(text: string) {
+    const sayThis = new SpeechSynthesisUtterance(text);
+    sayThis.voice = voice;
+    sayThis.rate = 0.8;
+    sayThis.pitch = 1;
+    synth.speak(sayThis);
+  }
+
   const getRegionData = (region: any) => {
     if (REGIONLIST.data.indexOf(region) !== -1) {
       const f = data.regionData.find((d: any) => d.region === region);
@@ -66,6 +78,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
         if (err) {
           console.log("Please try again");
         } else {
+          speakText("Hello");
           console.log(data);
         }
       },
@@ -157,6 +170,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
   return (
     <GlobalContext.Provider
       value={{
+        data,
         tab,
         setTab,
         listening,
