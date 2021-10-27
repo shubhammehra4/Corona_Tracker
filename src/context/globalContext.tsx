@@ -58,7 +58,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
   const commands: SpeechRecognitionOptions["commands"] = [
     {
       command: "statistics of :city",
-      callback: (_a: string, val: string) => {
+      callback: (_a: string, val: string, _, { resetTranscript }) => {
         const temp = val.split(" ");
         temp.splice(0, 2);
         const state = temp.join(" ");
@@ -70,6 +70,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
           const text = `Currently, in ${data.region}, the number of total cases are ${data.totalInfected}, active cases are ${data.activeCases} and recovered cases are ${data.recovered}`;
           speakText(text);
         }
+        resetTranscript();
       },
       isFuzzyMatch: true,
       fuzzyMatchingThreshold: 0.3,
