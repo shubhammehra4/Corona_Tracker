@@ -48,6 +48,19 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
     synth.speak(sayThis);
   }
 
+  function echoCancellation() {
+    const AudioContext = window.AudioContext;
+    const context = new AudioContext();
+    const sineWave = context.createOscillator();
+
+    const gainNode = context.createGain();
+    sineWave.connect(gainNode);
+    gainNode.connect(context.destination);
+
+    const audioParam = sineWave.detune;
+    gainNode.gain.value = 0.9;
+  }
+
   const getRegionData = (region: any) => {
     if (REGIONLIST.data.indexOf(region) !== -1) {
       const f = data.regionData.find((d: any) => d.region === region);
@@ -180,6 +193,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
 
   useEffect(() => {
     window.addEventListener("keydown", keyDownListener);
+    echoCancellation();
 
     return () => {
       window.removeEventListener("keydown", keyDownListener);
