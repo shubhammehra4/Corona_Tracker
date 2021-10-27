@@ -1,44 +1,12 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
-import SpeechRecognition, {
-  SpeechRecognitionOptions,
-  useSpeechRecognition,
-} from "react-speech-recognition";
-import { Mic } from "../Components/Mic";
+import SpeechRecognition from "react-speech-recognition";
+import { Mic } from "../components/Mic";
+import { useGlobalContext } from "../context/globalContext";
 import corona from "../Images/corona.svg";
 import mic from "../Images/mic.svg";
 
-const commands: SpeechRecognitionOptions["commands"] = [
-  {
-    command: "(get) stats of *",
-    callback: (_c, city) => {
-      alert(`Get stats of ${city}`);
-    },
-    isFuzzyMatch: true,
-    fuzzyMatchingThreshold: 0.5,
-  },
-  {
-    command: "(get) :status cases of *",
-    callback: (status: string, city: string) => {
-      const validStatus = ["active", "inactive", "total"];
-
-      if (validStatus.indexOf(status.toLowerCase()) != -1) {
-        alert(`Get ${status} cases of ${city}`);
-      } else {
-        alert("Invalid status");
-      }
-    },
-  },
-  {
-    command: "clear",
-    callback: ({ resetTranscript }) => resetTranscript(),
-  },
-];
-
 export default function Home() {
-  const { transcript, resetTranscript } = useSpeechRecognition({ commands });
-  const [isListening, setIsListening] = useState<boolean>(false);
-
+  const { listening, startListening, stopListening } = useGlobalContext();
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     alert(
       "Browser doest not Support Speech Recognition, please switch to the latest version!"
@@ -46,21 +14,17 @@ export default function Home() {
     return <></>;
   }
 
-  const startListening = () => {
-    setIsListening(true);
-    SpeechRecognition.startListening({
-      continuous: true,
-    });
-  };
-  const stopListening = () => {
-    setIsListening(false);
-    SpeechRecognition.stopListening();
-  };
+  // function keyDownListener(e: KeyboardEvent) {
+  //   console.log("Keypress", e.code, e.key);
+  // }
 
-  const resetListening = () => {
-    resetTranscript();
-    // stopListening();
-  };
+  // useEffect(() => {
+  //   window.addEventListener("keydown", keyDownListener);
+
+  //   return () => {
+  //     window.removeEventListener("keydown", keyDownListener);
+  //   };
+  // }, [keyDownListener]);
 
   return (
     <>
@@ -84,7 +48,7 @@ export default function Home() {
           </p>
 
           <button
-            onClick={startListening}
+            onClick={() => startListening()}
             className="my-4 lg:my-10 bg-[#E45E5E] w-[fit-content] px-5 lg:px-16 py-1 lg:py-3 rounded-full text-lg md:text-xl font-bold hover:opacity-90 flex items-center"
           >
             <span className="mr-3">
@@ -97,13 +61,6 @@ export default function Home() {
           <img src={corona} className="h-[240px]  md:h-[480px] md:w-[500px]" />
         </div>
       </motion.div>
-      {isListening && (
-        <Mic
-          transcript={transcript}
-          stop={stopListening}
-          reset={resetListening}
-        />
-      )}
     </>
   );
 }

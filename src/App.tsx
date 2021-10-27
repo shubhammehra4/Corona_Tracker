@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { AnimatePresence, motion, AnimateSharedLayout } from "framer-motion";
+import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
+import { useEffect } from "react";
+import { Mic } from "./components/Mic";
+import GloabContextWrapper, { useGlobalContext } from "./context/globalContext";
+import Guidelines from "./Tabs/Guidelines";
 import Home from "./Tabs/Home";
 import Tracker from "./Tabs/Tracker";
-import Guidelines from "./Tabs/Guidelines";
 
 function App() {
-  const [tab, setTab] = useState<number>(0);
-
+  const { tab, setTab, listening, transcript, resetTranscript, stopListening } =
+    useGlobalContext();
   const navs = ["Home", "Tracker", "Guidelines"];
 
   return (
@@ -39,6 +41,13 @@ function App() {
           {tab == 0 ? <Home /> : tab == 1 ? <Tracker /> : <Guidelines />}
         </AnimatePresence>
       </div>
+      {listening && (
+        <Mic
+          transcript={transcript}
+          reset={resetTranscript}
+          stop={stopListening}
+        />
+      )}
     </div>
   );
 }
