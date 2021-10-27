@@ -6,25 +6,13 @@ import corona from "../Images/corona.svg";
 import mic from "../Images/mic.svg";
 
 export default function Home() {
-  const { listening, startListening, stopListening } = useGlobalContext();
+  const { startListening } = useGlobalContext();
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     alert(
       "Browser doest not Support Speech Recognition, please switch to the latest version!"
     );
     return <></>;
   }
-
-  // function keyDownListener(e: KeyboardEvent) {
-  //   console.log("Keypress", e.code, e.key);
-  // }
-
-  // useEffect(() => {
-  //   window.addEventListener("keydown", keyDownListener);
-
-  //   return () => {
-  //     window.removeEventListener("keydown", keyDownListener);
-  //   };
-  // }, [keyDownListener]);
 
   return (
     <>

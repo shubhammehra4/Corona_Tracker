@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState } from "react";
+import axios from "axios";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import SpeechRecognition, {
   SpeechRecognitionOptions,
   useSpeechRecognition,
 } from "react-speech-recognition";
+import REGIONLIST from "../regions.json";
 
 type GlobalContext = {
   tab: number;
@@ -13,6 +15,17 @@ type GlobalContext = {
   startListening: () => void;
   stopListening: () => void;
 };
+// function keyDownListener(e: KeyboardEvent) {
+//   console.log("Keypress", e.code, e.key);
+// }
+
+// useEffect(() => {
+//   window.addEventListener("keydown", keyDownListener);
+
+//   return () => {
+//     window.removeEventListener("keydown", keyDownListener);
+//   };
+// }, [keyDownListener]);
 
 const GlobalContext = createContext<GlobalContext>(null!);
 
@@ -20,32 +33,87 @@ interface GloabContextWrapperProps {
   children: React.ReactChild[] | React.ReactChild;
 }
 
+const statusMapping: any = {
+  active: "activeCases",
+  recovered: "recovered",
+  total: "totalInfected",
+  deceased: "deceased",
+};
+
 const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
   const [tab, setTab] = useState<number>(0);
+  const [listening, setListening] = useState<boolean>(false);
+  const [data, setData] = useState<any>([]);
+
+  const getRegionData = (region: any) => {
+    if (REGIONLIST.data.indexOf(region) !== -1) {
+      const f = data.regionData.find((d: any) => d.region === region);
+      return [null, f];
+    } else {
+      return [true, null];
+    }
+  };
+
   const commands: SpeechRecognitionOptions["commands"] = [
     {
       command: "statistics of :city",
-      callback: (c, city, ...rest) => {
-        console.log(c);
-        console.log(city);
-        console.log(rest);
+      callback: (_a: string, val: string) => {
+        const temp = val.split(" ");
+        temp.splice(0, 2);
+        const state = temp.join(" ");
+        const [err, data] = getRegionData(state);
+
+        if (err) {
+          console.log("Please try again");
+        } else {
+          console.log(data);
+        }
       },
       isFuzzyMatch: true,
       fuzzyMatchingThreshold: 0.3,
     },
     {
       command: ":status cases in *",
-      callback: (status: string, city: string) => {
-        const validStatus = ["active", "inactive", "total"];
+      callback: (_a: string, val: string) => {
+        const validStatus = ["active", "recovered", "total"];
+        const [status, ...temp] = val.split(" ");
 
         if (validStatus.indexOf(status.toLowerCase()) != -1) {
-          console.log(status, city);
+          temp.splice(0, 2);
+          const state = temp.join(" ");
+          const [err, data] = getRegionData(state);
+          if (err) {
+            console.log("Please try again");
+          } else {
+            console.log(data[statusMapping[status]]);
+          }
         } else {
-          console.log("Invalid status", status, city);
+          console.log("Invalid status", status);
         }
       },
       isFuzzyMatch: true,
       fuzzyMatchingThreshold: 0.3,
+    },
+    {
+      command: "(show) home",
+      callback: ({ resetTranscript }) => {
+        setTab(0);
+        resetTranscript();
+      },
+    },
+    {
+      command: "(show) tracker",
+      callback: ({ resetTranscript }) => {
+        setTab(1);
+        resetTranscript();
+      },
+    },
+    {
+      command: "(show) guidelines",
+      callback: ({ resetTranscript }) => {
+        setTab(2);
+        resetTranscript();
+      },
     },
     {
       command: "clear",
@@ -55,24 +123,36 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
       command: "close",
       callback: ({ resetTranscript }) => {
         resetTranscript();
+        setListening(false);
         SpeechRecognition.stopListening();
       },
     },
   ];
 
-  const { transcript, resetTranscript, listening } = useSpeechRecognition({
+  const { transcript, resetTranscript } = useSpeechRecognition({
     commands,
   });
 
   const startListening = () => {
+    setListening(true);
     SpeechRecognition.startListening({
       continuous: true,
     });
   };
   const stopListening = () => {
+    setListening(false);
     resetTranscript();
     SpeechRecognition.stopListening();
   };
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await axios.get(
+        "https://api.apify.com/v2/key-value-stores/toDWvRj1JpTXiM8FF/records/LATEST?disableRedirect=true"
+      );
+      setData(data);
+    })();
+  }, []);
 
   return (
     <GlobalContext.Provider

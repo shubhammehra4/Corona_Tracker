@@ -1,7 +1,6 @@
 import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
-import { useEffect } from "react";
 import { Mic } from "./components/Mic";
-import GloabContextWrapper, { useGlobalContext } from "./context/globalContext";
+import { useGlobalContext } from "./context/globalContext";
 import Guidelines from "./Tabs/Guidelines";
 import Home from "./Tabs/Home";
 import Tracker from "./Tabs/Tracker";

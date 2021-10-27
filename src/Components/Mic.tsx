@@ -11,8 +11,8 @@ interface MicProps {
 
 export const Mic: React.FC<MicProps> = ({ reset, stop, transcript }) => {
   return (
-    <div className="absolute bottom-8 right-8 z-20 bg-[#E45E5E] p-4 px-8 rounded-full flex justify-center items-center">
-      <div className="w-16 animate-pulse">
+    <div className="absolute bottom-8 right-8 z-20 bg-[#E45E5E] p-2 px-8 rounded-full flex justify-center items-center">
+      <div role="button" onClick={() => stop()} className="w-16 animate-pulse">
         <img className="w-12" src={mic} />
       </div>
       <div className="h-16">
