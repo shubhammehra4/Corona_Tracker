@@ -15,6 +15,7 @@ type GlobalContext = {
   resetTranscript: () => void;
   startListening: () => void;
   stopListening: () => void;
+  displayResult: string;
 };
 
 const GlobalContext = createContext<GlobalContext>(null!);
@@ -34,6 +35,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
   const [tab, setTab] = useState<number>(0);
   const [listening, setListening] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
+  const [displayResult, setDisplayResult] = useState<string>("");
 
   const synth = window.speechSynthesis;
   const voice = window.speechSynthesis.getVoices()[1];
@@ -68,7 +70,9 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
           console.log("Please try again");
         } else {
           const text = `Currently, in ${data.region}, the number of total cases are ${data.totalInfected}, active cases are ${data.activeCases} and recovered cases are ${data.recovered}`;
+          setDisplayResult(text);
           speakText(text);
+          setDisplayResult("");
         }
         resetTranscript();
       },
@@ -91,7 +95,9 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
             const text = `Currently, the ${status} cases in ${state} are ${
               data[statusMapping[status]]
             }`;
+            setDisplayResult(text);
             speakText(text);
+            setDisplayResult("");
           }
         } else {
           console.log("Invalid status", status);
@@ -191,6 +197,7 @@ const GloabContextWrapper = ({ children }: GloabContextWrapperProps) => {
         resetTranscript,
         startListening,
         stopListening,
+        displayResult,
       }}
     >
       {children}

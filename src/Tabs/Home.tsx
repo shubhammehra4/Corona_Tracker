@@ -24,7 +24,7 @@ export default function Home() {
       >
         <div className="flex flex-col">
           <p className="md:text-[30px] text-[#B4FFFF] font-semibold">
-            Get Vaccinated, Boost You Health
+            Get Vaccinated, Boost Your Health
           </p>
           <h1 className="text-2xl md:text-5xl lg:text-[80px] leading-none font-bold my-5 lg:my-10">
             Track the Corona <br /> Stats in Your City

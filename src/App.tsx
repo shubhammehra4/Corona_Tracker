@@ -4,11 +4,27 @@ import { useGlobalContext } from "./context/globalContext";
 import Guidelines from "./Tabs/Guidelines";
 import Home from "./Tabs/Home";
 import Tracker from "./Tabs/Tracker";
+import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const { tab, setTab, listening, transcript, resetTranscript, stopListening } =
+  const { tab, setTab, listening, transcript, stopListening, displayResult } =
     useGlobalContext();
   const navs = ["Home", "Tracker", "Guidelines"];
+
+  useEffect(() => {
+    if (displayResult !== "") {
+      toast(displayResult, {
+        position: "top-center",
+        autoClose: 10000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        draggable: true,
+        theme: "colored",
+      });
+    }
+  }, [displayResult]);
 
   return (
     <div className="text-white max-w-7xl mx-auto h-full">
@@ -43,6 +59,7 @@ function App() {
       <AnimatePresence exitBeforeEnter>
         {listening && <Mic transcript={transcript} stop={stopListening} />}
       </AnimatePresence>
+      <ToastContainer />
     </div>
   );
 }

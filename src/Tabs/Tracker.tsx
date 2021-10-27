@@ -43,49 +43,41 @@ export default function Tracker() {
     ],
   };
 
-  const options = {
-    scales: {
-      xAxes: [
-        {
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: "X axe name",
-            fontColor: "#000000",
-            fontSize: 10,
-          },
-          ticks: {
-            fontColor: "black",
-            fontSize: 14,
-          },
-        },
-      ],
-      yAxes: [
-        {
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: "Y axe name",
-            fontColor: "#000000",
-            fontSize: 10,
-          },
-          ticks: {
-            fontColor: "black",
-            fontSize: 14,
-          },
-        },
-      ],
-    },
-  };
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 200 }}
       key={1}
-      className="text-3xl"
     >
-      <Bar data={data} className="text-white !text-white" />
+      <div>
+        <Bar
+          data={data}
+          options={{
+            scales: {
+              y: {
+                ticks: {
+                  color: "#fff",
+                  font: { size: 14 },
+                },
+              },
+              x: {
+                ticks: {
+                  color: "#fff",
+                  font: { size: 14 },
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: { color: "#fff", padding: 30, font: { size: 20 } },
+              },
+            },
+          }}
+        />
+      </div>
     </motion.div>
   );
+}
+{
 }

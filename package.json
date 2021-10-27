@@ -13,6 +13,7 @@
     "react-chartjs-2": "^3.3.0",
     "react-dom": "^17.0.0",
     "react-speech-recognition": "^3.9.0",
+    "react-toastify": "^8.0.3",
     "regenerator-runtime": "^0.13.9"
   },
   "devDependencies": {
