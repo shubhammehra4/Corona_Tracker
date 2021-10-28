@@ -27,7 +27,7 @@ export default function Home() {
             Get Vaccinated, Boost Your Health
           </p>
           <h1 className="text-2xl md:text-5xl lg:text-[80px] leading-none font-bold my-5 lg:my-10">
-            Track the Corona <br /> Stats in Your City
+            Track the Corona <br /> Stats in Your State
           </h1>
           <p className="font-semibold text-lg lg:text-2xl">
             Be aware of the trends of corona around you and take neccessary
